@@ -14,6 +14,6 @@ public class SubscriptionController {
 
     @PostMapping("/subscribe")
     public void subscribe(SubscribeInfo subscribeInfo) {
-
+        subscriptionService.createSubscription(subscribeInfo);
     }
 }

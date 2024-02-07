@@ -16,13 +16,13 @@ public class SubscriptionProduct {
 
     private String name;
 
-    private long amount;
+    private Long amount;
 
-    private int period;
+    private Long period;
 
-    private int chatTimes;
+    private Integer chatTimes;
 
-    private int unitStudyTimes;
+    private Integer unitStudyTimes;
 
     @Enumerated(EnumType.STRING)
     private SubscriptionType subscriptionType;
