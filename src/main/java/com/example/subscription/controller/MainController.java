@@ -22,4 +22,10 @@ public class MainController {
         mainService.serviceTwo();
         return "2 API 응답";
     }
+
+    @GetMapping("/service3")
+    public String apiThree() {
+        mainService.serviceThree();
+        return "3 API 응답";
+    }
 }

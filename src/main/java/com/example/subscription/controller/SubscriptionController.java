@@ -1,7 +1,7 @@
 package com.example.subscription.controller;
 
 import com.example.subscription.service.SubscriptionService;
-import com.example.subscription.service.dto.SubscribeInfo;
+import com.example.subscription.service.dto.PurchaseInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +14,7 @@ public class SubscriptionController {
     private final SubscriptionService subscriptionService;
 
     @PostMapping("/subscribe")
-    public void subscribe(@RequestBody SubscribeInfo subscribeInfo) {
-        subscriptionService.createSubscription(subscribeInfo);
+    public void subscribe(@RequestBody PurchaseInfo purchaseInfo) {
+        subscriptionService.createSubscription(purchaseInfo);
     }
 }

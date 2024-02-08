@@ -6,14 +6,14 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class SubscribeInfo {
+public class PurchaseInfo {
 
     private Long memberId;
     private Long subscriptionProductId;
     private int quantity;
 
     @Builder
-    private SubscribeInfo(Long memberId, Long subscriptionProductId, int quantity) {
+    private PurchaseInfo(Long memberId, Long subscriptionProductId, int quantity) {
         this.memberId = memberId;
         this.subscriptionProductId = subscriptionProductId;
         this.quantity = quantity;

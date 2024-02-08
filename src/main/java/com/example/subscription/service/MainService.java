@@ -13,4 +13,8 @@ public class MainService {
     public void serviceTwo() {
         log.info("service2 실행");
     }
+
+    public void serviceThree() {
+        log.info("service3 실행");
+    }
 }
