@@ -25,6 +25,7 @@ public class Subscription {
 
     private int unitStudyCount;
 
+    // TODO :: 사용중, 미사용, 사용완료로 구분 
     private boolean isActive = true;
 
     @ManyToOne
