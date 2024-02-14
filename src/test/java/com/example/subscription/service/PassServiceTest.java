@@ -1,8 +1,8 @@
 package com.example.subscription.service;
 
-import com.example.subscription.entity.Subscription;
-import com.example.subscription.entity.SubscriptionType;
-import com.example.subscription.repo.SubscriptionRepository;
+import com.example.subscription.entity.Pass;
+import com.example.subscription.entity.PassType;
+import com.example.subscription.repo.PassRepository;
 import com.example.subscription.service.dto.PurchaseInfo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,12 +12,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
-class SubscriptionServiceTest {
+class PassServiceTest {
 
     @Autowired
-    SubscriptionService subscriptionService;
+    PassService passService;
     @Autowired
-    SubscriptionRepository subscriptionRepository;
+    PassRepository passRepository;
 
     @DisplayName("구독권 정보를 전달받아 구독권을 생성한다.")
     @Test
@@ -30,11 +30,11 @@ class SubscriptionServiceTest {
             .build();
 
         // when
-        subscriptionService.createSubscription(purchaseInfo);
-        Subscription subscription = subscriptionRepository.findAll().get(0);
+        passService.createSubscription(purchaseInfo);
+        Pass pass = passRepository.findAll().get(0);
 
         // then
-        assertThat(subscription.getSubscriptionProduct().getSubscriptionType()).isEqualTo(SubscriptionType.PERIOD);
+        assertThat(pass.getPassProduct().getPassType()).isEqualTo(PassType.SUBSCRIPTION);
     }
 
     @DisplayName("사용자의 id를 인자로 받아 구독권 및 질문권 정보를 반환한다.")

@@ -12,7 +12,7 @@ import static jakarta.persistence.GenerationType.*;
 @Getter
 @NoArgsConstructor
 @Entity
-public class Subscription {
+public class Pass {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -29,31 +29,31 @@ public class Subscription {
     private boolean isActive = true;
 
     @ManyToOne
-    private SubscriptionProduct subscriptionProduct;
+    private PassProduct passProduct;
 
     @ManyToOne
     private Member member;
 
     @Builder
-    private Subscription(LocalDateTime startDt, LocalDateTime endDt, int questionCount, int unitStudyCount, boolean isActive, SubscriptionProduct subscriptionProduct, Member member) {
+    private Pass(LocalDateTime startDt, LocalDateTime endDt, int questionCount, int unitStudyCount, boolean isActive, PassProduct passProduct, Member member) {
         this.startDt = startDt;
         this.endDt = endDt;
         this.questionCount = questionCount;
         this.unitStudyCount = unitStudyCount;
         this.isActive = isActive;
-        this.subscriptionProduct = subscriptionProduct;
+        this.passProduct = passProduct;
         this.member = member;
     }
 
     public boolean isPeriodSubscription() {
-        return SubscriptionType.PERIOD.equals(subscriptionProduct.getSubscriptionType()) && isActive;
+        return PassType.SUBSCRIPTION.equals(passProduct.getPassType()) && isActive;
     }
 
     public boolean isPaidSingleSubscription() {
-        return SubscriptionType.PAID_SINGLE.equals(subscriptionProduct.getSubscriptionType()) && isActive;
+        return PassType.PAID_CONSUMABLE.equals(passProduct.getPassType()) && isActive;
     }
 
     public boolean isFreeSingleSubscription() {
-        return SubscriptionType.FREE_SINGLE.equals(subscriptionProduct.getSubscriptionType()) && isActive;
+        return PassType.FREE_CONSUMABLE.equals(passProduct.getPassType()) && isActive;
     }
 }

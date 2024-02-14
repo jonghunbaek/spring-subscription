@@ -1,8 +1,8 @@
 package com.example.subscription.repo;
 
 import com.example.subscription.entity.Member;
-import com.example.subscription.entity.Subscription;
-import com.example.subscription.entity.SubscriptionProduct;
+import com.example.subscription.entity.Pass;
+import com.example.subscription.entity.PassProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +13,12 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
-class SubscriptionRepositoryTest {
+class PassRepositoryTest {
 
     @Autowired
-    SubscriptionRepository subscriptionRepository;
+    PassRepository passRepository;
     @Autowired
-    SubscriptionProductRepository subscriptionProductRepository;
+    PassProductRepository passProductRepository;
     @Autowired
     MemberRepository memberRepository;
 
@@ -26,20 +26,20 @@ class SubscriptionRepositoryTest {
     @Test
     void findByMemberId() {
         // given
-        SubscriptionProduct subscriptionProduct = subscriptionProductRepository.findById(1L).get();
+        PassProduct passProduct = passProductRepository.findById(1L).get();
         Member member = memberRepository.findById(1L).get();
-        subscriptionRepository.save(Subscription.builder()
+        passRepository.save(Pass.builder()
                 .startDt(LocalDateTime.now())
-                .endDt(LocalDateTime.now().plusDays(subscriptionProduct.getPeriod()))
-                .subscriptionProduct(subscriptionProduct)
+                .endDt(LocalDateTime.now().plusDays(passProduct.getPeriod()))
+                .subscriptionProduct(passProduct)
                 .member(member)
             .build());
 
         // when
-        Subscription subscription = subscriptionRepository.findAllByMemberId(1L).get(0);
+        Pass pass = passRepository.findAllByMemberId(1L).get(0);
 
         // then
-        assertThat(subscription.getSubscriptionProduct().getAmount()).isEqualTo(55000L);
+        assertThat(pass.getPassProduct().getAmount()).isEqualTo(55000L);
     }
 
 }

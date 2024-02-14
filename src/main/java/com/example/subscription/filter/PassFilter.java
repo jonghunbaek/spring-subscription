@@ -1,8 +1,7 @@
 package com.example.subscription.filter;
 
-import com.example.subscription.repo.SubscriptionRepository;
+import com.example.subscription.repo.PassRepository;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,9 +15,9 @@ import java.util.Arrays;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class SubscriptionFIlter extends OncePerRequestFilter {
+public class PassFilter extends OncePerRequestFilter {
 
-    private final SubscriptionRepository subscriptionRepository;
+    private final PassRepository passRepository;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {

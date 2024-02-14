@@ -9,7 +9,7 @@ import static jakarta.persistence.GenerationType.*;
 @Getter
 @NoArgsConstructor
 @Entity
-public class SubscriptionProduct {
+public class PassProduct {
 
     @Id @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -25,5 +25,5 @@ public class SubscriptionProduct {
     private Integer unitStudyTimes;
 
     @Enumerated(EnumType.STRING)
-    private SubscriptionType subscriptionType;
+    private PassType passType;
 }
