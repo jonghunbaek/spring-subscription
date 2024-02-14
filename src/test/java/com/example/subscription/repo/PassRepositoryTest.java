@@ -36,7 +36,7 @@ class PassRepositoryTest {
             .build());
 
         // when
-        Pass pass = passRepository.findAllByMemberIdAndActiveIsTrue(1L).get(0);
+        Pass pass = passRepository.findById(1L).orElseThrow();
 
         // then
         assertThat(pass.getPassProduct().getAmount()).isEqualTo(55000L);
