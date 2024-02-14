@@ -5,13 +5,14 @@ import com.example.subscription.entity.Member;
 import com.example.subscription.entity.Pass;
 import com.example.subscription.entity.PassProduct;
 import com.example.subscription.entity.PassType;
-import com.example.subscription.entity.redis.PassRedis;
+import com.example.subscription.entity.redis.PassCache;
 import com.example.subscription.repo.MemberRepository;
 import com.example.subscription.repo.PassProductRepository;
 import com.example.subscription.repo.PassRepository;
-import com.example.subscription.repo.redis.PassRedisRepository;
+import com.example.subscription.repo.redis.PassCacheRepository;
 import com.example.subscription.service.dto.PurchaseInfo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 @Service
@@ -28,7 +30,7 @@ public class PassService {
 
     private final PassProductRepository passProductRepository;
     private final PassRepository passRepository;
-    private final PassRedisRepository passRedisRepository;
+    private final PassCacheRepository passCacheRepository;
     private final MemberRepository memberRepository;
 
     public PassInfo findSubscription(Long memberId) {
@@ -39,7 +41,7 @@ public class PassService {
         // 기간제 이용권이 있을 경우
         if (isPresent(subscriptionPass)) {
             Pass pass = subscriptionPass.get(0);
-            passRedisRepository.save(PassRedis.fromSubscription(pass));
+            passCacheRepository.save(PassCache.fromSubscription(pass));
 
             return PassInfo.fromSubscription(pass);
         }
@@ -48,7 +50,7 @@ public class PassService {
         if (isPresent(consumablePass)) {
             int totalChatTimes = calculateTotalChatTimes(consumablePass);
             Pass pass = consumablePass.get(0);
-            passRedisRepository.save(PassRedis.fromConsumable(pass, totalChatTimes));
+            passCacheRepository.save(PassCache.fromConsumable(pass, totalChatTimes));
 
             return PassInfo.fromConsumable(pass, totalChatTimes);
         }
@@ -58,7 +60,7 @@ public class PassService {
     }
 
     private Map<Boolean, List<Pass>> findPassByType(Long memberId) {
-        List<Pass> passes = passRepository.findAllByMemberIdAndActiveIsTrue(memberId);
+        List<Pass> passes = passRepository.findAllByMemberIdAndActive(memberId);
 
         return passes.stream()
             .collect(Collectors.groupingBy(Pass::isSubscription));
@@ -75,7 +77,7 @@ public class PassService {
     }
 
     public void createSubscription(PurchaseInfo purchaseInfo) {
-        PassProduct passProduct = passProductRepository.findById(purchaseInfo.getSubscriptionProductId())
+        PassProduct passProduct = passProductRepository.findById(purchaseInfo.getPassProductId())
             .orElseThrow(() -> new IllegalArgumentException("일치하는 구독권이 없습니다."));
 
         Member member = memberRepository.findById(purchaseInfo.getMemberId())
@@ -90,10 +92,9 @@ public class PassService {
     }
 
     private void savePeriodSubscription(PassProduct passProduct, Member member) {
-        Pass pass;
         LocalDateTime startDt = LocalDateTime.now();
 
-        pass = Pass.builder()
+        Pass pass = Pass.builder()
             .passProduct(passProduct)
             .startDt(startDt)
             .endDt(startDt.plusDays(passProduct.getPeriod()))

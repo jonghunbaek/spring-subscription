@@ -2,10 +2,10 @@ package com.example.subscription.entity.redis;
 
 import com.example.subscription.entity.Pass;
 import com.example.subscription.entity.PassType;
-import jakarta.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDateTime;
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @RedisHash(value = "subscription", timeToLive = 3600)
-public class PassRedis {
+public class PassCache {
 
     @Id
     private Long memberId;
@@ -29,7 +29,7 @@ public class PassRedis {
     private int remainingUnitTimes;
 
     @Builder
-    private PassRedis(Long memberId, PassType passType, LocalDateTime startDate, LocalDateTime endDate, int remainingChatTimes, int remainingUnitTimes) {
+    private PassCache(Long memberId, PassType passType, LocalDateTime startDate, LocalDateTime endDate, int remainingChatTimes, int remainingUnitTimes) {
         this.memberId = memberId;
         this.passType = passType;
         this.startDate = startDate;
@@ -38,8 +38,8 @@ public class PassRedis {
         this.remainingUnitTimes = remainingUnitTimes;
     }
 
-    public static PassRedis fromSubscription(Pass subscriptionPass) {
-        return PassRedis.builder()
+    public static PassCache fromSubscription(Pass subscriptionPass) {
+        return PassCache.builder()
             .memberId(subscriptionPass.getMember().getId())
             .passType(subscriptionPass.getPassProduct().getPassType())
             .startDate(subscriptionPass.getStartDt())
@@ -47,8 +47,8 @@ public class PassRedis {
             .build();
     }
 
-    public static PassRedis fromConsumable(Pass consumablePass, int totalChatTimes) {
-        return PassRedis.builder()
+    public static PassCache fromConsumable(Pass consumablePass, int totalChatTimes) {
+        return PassCache.builder()
             .memberId(consumablePass.getMember().getId())
             .passType(consumablePass.getPassProduct().getPassType())
             .remainingChatTimes(totalChatTimes)

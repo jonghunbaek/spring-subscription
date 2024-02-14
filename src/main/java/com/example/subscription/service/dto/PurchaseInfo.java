@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 public class PurchaseInfo {
 
     private Long memberId;
-    private Long subscriptionProductId;
+    private Long passProductId;
     private int quantity;
 
     @Builder
-    private PurchaseInfo(Long memberId, Long subscriptionProductId, int quantity) {
+    private PurchaseInfo(Long memberId, Long passProductId, int quantity) {
         this.memberId = memberId;
-        this.subscriptionProductId = subscriptionProductId;
+        this.passProductId = passProductId;
         this.quantity = quantity;
     }
 }

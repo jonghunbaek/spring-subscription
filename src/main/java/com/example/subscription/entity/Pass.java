@@ -34,17 +34,16 @@ public class Pass {
     private Member member;
 
     @Builder
-    private Pass(LocalDateTime startDt, LocalDateTime endDt, int remainingChatTimes, int remainingUnitStudyTimes, boolean isActive, PassProduct passProduct, Member member) {
+    private Pass(LocalDateTime startDt, LocalDateTime endDt, int remainingChatTimes, int remainingUnitStudyTimes, PassProduct passProduct, Member member) {
         this.startDt = startDt;
         this.endDt = endDt;
         this.remainingChatTimes = remainingChatTimes;
         this.remainingUnitStudyTimes = remainingUnitStudyTimes;
-        this.isActive = isActive;
         this.passProduct = passProduct;
         this.member = member;
     }
 
     public boolean isSubscription() {
-        return PassType.SUBSCRIPTION.equals(passProduct.getPassType()) && isActive;
+        return PassType.SUBSCRIPTION.equals(passProduct.getPassType());
     }
 }
