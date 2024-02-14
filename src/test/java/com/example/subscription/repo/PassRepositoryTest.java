@@ -31,12 +31,12 @@ class PassRepositoryTest {
         passRepository.save(Pass.builder()
                 .startDt(LocalDateTime.now())
                 .endDt(LocalDateTime.now().plusDays(passProduct.getPeriod()))
-                .subscriptionProduct(passProduct)
+                .passProduct(passProduct)
                 .member(member)
             .build());
 
         // when
-        Pass pass = passRepository.findAllByMemberId(1L).get(0);
+        Pass pass = passRepository.findAllByMemberIdAndActiveIsTrue(1L).get(0);
 
         // then
         assertThat(pass.getPassProduct().getAmount()).isEqualTo(55000L);

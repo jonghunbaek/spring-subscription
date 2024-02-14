@@ -21,11 +21,10 @@ public class Pass {
 
     private LocalDateTime endDt;
 
-    private int questionCount;
+    private int remainingChatTimes;
 
-    private int unitStudyCount;
+    private int remainingUnitStudyTimes;
 
-    // TODO :: 사용중, 미사용, 사용완료로 구분 
     private boolean isActive = true;
 
     @ManyToOne
@@ -35,25 +34,17 @@ public class Pass {
     private Member member;
 
     @Builder
-    private Pass(LocalDateTime startDt, LocalDateTime endDt, int questionCount, int unitStudyCount, boolean isActive, PassProduct passProduct, Member member) {
+    private Pass(LocalDateTime startDt, LocalDateTime endDt, int remainingChatTimes, int remainingUnitStudyTimes, boolean isActive, PassProduct passProduct, Member member) {
         this.startDt = startDt;
         this.endDt = endDt;
-        this.questionCount = questionCount;
-        this.unitStudyCount = unitStudyCount;
+        this.remainingChatTimes = remainingChatTimes;
+        this.remainingUnitStudyTimes = remainingUnitStudyTimes;
         this.isActive = isActive;
         this.passProduct = passProduct;
         this.member = member;
     }
 
-    public boolean isPeriodSubscription() {
+    public boolean isSubscription() {
         return PassType.SUBSCRIPTION.equals(passProduct.getPassType()) && isActive;
-    }
-
-    public boolean isPaidSingleSubscription() {
-        return PassType.PAID_CONSUMABLE.equals(passProduct.getPassType()) && isActive;
-    }
-
-    public boolean isFreeSingleSubscription() {
-        return PassType.FREE_CONSUMABLE.equals(passProduct.getPassType()) && isActive;
     }
 }

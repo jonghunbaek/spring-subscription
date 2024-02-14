@@ -1,12 +1,15 @@
 package com.example.subscription.service;
 
+import com.example.subscription.controller.dto.PassInfo;
 import com.example.subscription.entity.Member;
 import com.example.subscription.entity.Pass;
 import com.example.subscription.entity.PassProduct;
 import com.example.subscription.entity.PassType;
+import com.example.subscription.entity.redis.PassRedis;
 import com.example.subscription.repo.MemberRepository;
 import com.example.subscription.repo.PassProductRepository;
 import com.example.subscription.repo.PassRepository;
+import com.example.subscription.repo.redis.PassRedisRepository;
 import com.example.subscription.service.dto.PurchaseInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Transactional
@@ -24,36 +28,50 @@ public class PassService {
 
     private final PassProductRepository passProductRepository;
     private final PassRepository passRepository;
+    private final PassRedisRepository passRedisRepository;
     private final MemberRepository memberRepository;
 
-    public String findSubscription(Long memberId) {
-        List<Pass> passes = passRepository.findAllByMemberId(memberId);
+    public PassInfo findSubscription(Long memberId) {
+        Map<Boolean, List<Pass>> passGroup = findPassByType(memberId);
+        List<Pass> subscriptionPass = passGroup.get(true);
+        List<Pass> consumablePass = passGroup.get(false);
 
-        Optional<Pass> periodSub = passes.stream()
-            .filter(Pass::isPeriodSubscription)
-            .findAny();
+        // 기간제 이용권이 있을 경우
+        if (isPresent(subscriptionPass)) {
+            Pass pass = subscriptionPass.get(0);
+            passRedisRepository.save(PassRedis.fromSubscription(pass));
 
-        if (periodSub.isPresent()) {
-            return "기간제 구독권 존재";
+            return PassInfo.fromSubscription(pass);
         }
 
-        Optional<Pass> paidSub = passes.stream()
-            .filter(Pass::isPaidSingleSubscription)
-            .findAny();
+        // 소모성 이용권이 있을 경우
+        if (isPresent(consumablePass)) {
+            int totalChatTimes = calculateTotalChatTimes(consumablePass);
+            Pass pass = consumablePass.get(0);
+            passRedisRepository.save(PassRedis.fromConsumable(pass, totalChatTimes));
 
-        if (paidSub.isPresent()) {
-            return "유료 단건 구독권 존재";
+            return PassInfo.fromConsumable(pass, totalChatTimes);
         }
 
-        Optional<Pass> freeSub = passes.stream()
-            .filter(Pass::isFreeSingleSubscription)
-            .findAny();
+        // 이용권이 없는 경우
+        throw new IllegalArgumentException("해당 사용자는 유효한 이용권을 가지고 있지 않습니다.");
+    }
 
-        if (freeSub.isPresent()) {
-            return "무료 단건 구독권 존재";
-        }
+    private Map<Boolean, List<Pass>> findPassByType(Long memberId) {
+        List<Pass> passes = passRepository.findAllByMemberIdAndActiveIsTrue(memberId);
 
-        return "존재하는 구독권 없음";
+        return passes.stream()
+            .collect(Collectors.groupingBy(Pass::isSubscription));
+    }
+
+    private static boolean isPresent(List<Pass> pass) {
+        return !pass.isEmpty();
+    }
+
+    private int calculateTotalChatTimes(List<Pass> consumablePass) {
+        return consumablePass.stream()
+            .mapToInt(Pass::getRemainingChatTimes)
+            .sum();
     }
 
     public void createSubscription(PurchaseInfo purchaseInfo) {

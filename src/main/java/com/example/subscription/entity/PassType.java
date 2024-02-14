@@ -5,8 +5,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public enum PassType {
     SUBSCRIPTION("기간제 이용권"),
-    PAID_CONSUMABLE("유료 소모성 이용권"),
-    FREE_CONSUMABLE("무료 소모성 이용권");
+    CHAT_CONSUMABLE("소모성 질문권"),
+    UNIT_CONSUMABLE("소모성 단원 학습권");
 
     private String description;
 
