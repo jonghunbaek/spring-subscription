@@ -20,7 +20,7 @@ public class AuthController {
     public void signIn(Long memberId, String password, HttpServletResponse response) {
         // 로그인 인증 로직 및 토큰 발행
 
-        PassInfo passInfo = passService.findSubscription(memberId);
+        PassInfo passInfo = passService.findPass(memberId);
 
         // 헤더에 구독권 정보를 담는 로직 추가
         if (PassType.SUBSCRIPTION.equals(passInfo.getPassType())) {

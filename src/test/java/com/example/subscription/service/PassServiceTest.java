@@ -49,7 +49,7 @@ class PassServiceTest {
         passService.createSubscription(consumablePassPurchaseInfo);
 
         // when
-        PassInfo passInfo = passService.findSubscription(1L);
+        PassInfo passInfo = passService.findPass(1L);
 
         // then
         assertThat(passInfo.getPassType()).isEqualTo(PassType.SUBSCRIPTION);

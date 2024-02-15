@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,12 +34,16 @@ public class PassService {
     private final PassCacheRepository passCacheRepository;
     private final MemberRepository memberRepository;
 
-    public PassInfo findSubscription(Long memberId) {
+    public PassInfo findPass(Long memberId) {
         Map<Boolean, List<Pass>> passGroup = findPassByType(memberId);
+
+        return createPassInfo(passGroup);
+    }
+
+    private PassInfo createPassInfo(Map<Boolean, List<Pass>> passGroup) {
         List<Pass> subscriptionPass = passGroup.get(true);
         List<Pass> consumablePass = passGroup.get(false);
 
-        // 기간제 이용권이 있을 경우
         if (isPresent(subscriptionPass)) {
             Pass pass = subscriptionPass.get(0);
             passCacheRepository.save(PassCache.fromSubscription(pass));
@@ -46,7 +51,6 @@ public class PassService {
             return PassInfo.fromSubscription(pass);
         }
 
-        // 소모성 이용권이 있을 경우
         if (isPresent(consumablePass)) {
             int totalChatTimes = calculateTotalChatTimes(consumablePass);
             Pass pass = consumablePass.get(0);
@@ -55,7 +59,6 @@ public class PassService {
             return PassInfo.fromConsumable(pass, totalChatTimes);
         }
 
-        // 이용권이 없는 경우
         throw new IllegalArgumentException("해당 사용자는 유효한 이용권을 가지고 있지 않습니다.");
     }
 
@@ -67,7 +70,7 @@ public class PassService {
     }
 
     private static boolean isPresent(List<Pass> pass) {
-        return !pass.isEmpty();
+        return !CollectionUtils.isEmpty(pass);
     }
 
     private int calculateTotalChatTimes(List<Pass> consumablePass) {
