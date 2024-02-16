@@ -5,11 +5,13 @@ import com.example.subscription.entity.PassType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.time.LocalDateTime;
 
+@ToString
 @Getter
 @NoArgsConstructor
 @RedisHash(value = "subscription", timeToLive = 3600)

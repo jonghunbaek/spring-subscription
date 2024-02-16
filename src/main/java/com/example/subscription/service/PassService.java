@@ -111,6 +111,7 @@ public class PassService {
         List<Pass> passes = IntStream.range(0, purchaseInfo.getQuantity())
             .mapToObj(i -> Pass.builder()
                 .passProduct(passProduct)
+                .remainingChatTimes(passProduct.getChatTimes())
                 .member(member)
                 .build())
             .toList();
