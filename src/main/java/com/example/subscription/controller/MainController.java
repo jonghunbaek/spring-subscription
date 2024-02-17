@@ -23,9 +23,9 @@ public class MainController {
         return "2 API 응답";
     }
 
-    @GetMapping("/service3")
+    @GetMapping("/question")
     public String apiThree() {
         mainService.serviceThree();
-        return "3 API 응답";
+        return "question API 응답";
     }
 }

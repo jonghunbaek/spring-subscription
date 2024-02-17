@@ -30,6 +30,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
+
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -47,7 +49,32 @@ class AuthControllerTest {
     @MockBean
     PassCacheRepository passCacheRepository;
 
-    @DisplayName("로그인 시 이용권 정보를 찾아 응답 헤더에 담아 반환한다.")
+    @DisplayName("로그인 시 구독성 이용권을 가지고 있다면 해당 정보를 찾아 응답 헤더에 담아 반환한다.")
+    @Test
+    void findSubscriptionPassAndPutHeader() throws Exception {
+        AuthInfo authInfo = new AuthInfo(1L, "zxcv");
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime endDate = startDate.plusDays(30L);
+        PassInfo passInfo = PassInfo.builder()
+                .startDate(startDate)
+                .endDate(endDate)
+                .passType(PassType.SUBSCRIPTION)
+                .build();
+
+        when(passService.findPass(authInfo.getMemberId()))
+                .thenReturn(passInfo);
+
+        mockMvc.perform(
+                        post("/sign-in")
+                                .content(objectMapper.writeValueAsString(authInfo))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(header().string(PassType.SUBSCRIPTION.toString(), startDate + ":" + endDate));
+    }
+
+    @DisplayName("로그인 시 소모성 이용권을 가지고 있다면 해당 정보를 찾아 응답 헤더에 담아 반환한다.")
     @Test
     void findPassAndPutHeader() throws Exception {
         AuthInfo authInfo = new AuthInfo(1L, "zxcv");

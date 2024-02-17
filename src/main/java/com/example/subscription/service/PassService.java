@@ -58,7 +58,8 @@ public class PassService {
 
             return PassInfo.fromConsumable(pass, totalChatTimes);
         }
-
+        
+        // 이용권이 없는 경우엔 다른 값을 넣어주는 방안을 모색하자. -> redis에서 데이터를 1시간만 가지고 있고 만료된 후에 조회해서 없는 경우와 구분하기 위해서임
         throw new IllegalArgumentException("해당 사용자는 유효한 이용권을 가지고 있지 않습니다.");
     }
 

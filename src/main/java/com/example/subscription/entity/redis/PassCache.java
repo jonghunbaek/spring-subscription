@@ -56,4 +56,26 @@ public class PassCache {
             .remainingChatTimes(totalChatTimes)
             .build();
     }
+
+    public PassCache deductChatTimes() {
+        this.remainingChatTimes -= 1;
+        return this;
+    }
+
+    public boolean isSubscription() {
+        if (PassType.SUBSCRIPTION.equals(passType)) {
+            validateExpiration();
+            return true;
+        }
+
+        return false;
+    }
+
+    private void validateExpiration() {
+        boolean isExpiration = endDate.isAfter(LocalDateTime.now());
+
+        if (isExpiration) {
+            throw new IllegalArgumentException("해당 구독성 이용권은 만료되었습니다.");
+        }
+    }
 }
