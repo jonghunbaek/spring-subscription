@@ -1,6 +1,6 @@
 package com.example.subscription.filter;
 
-import com.example.subscription.repo.PassRepository;
+import com.example.subscription.repo.redis.PassCacheRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -19,7 +19,7 @@ import java.util.Arrays;
 @Component
 public class PassFilter extends OncePerRequestFilter {
 
-    private final PassRepository passRepository;
+    private final PassCacheRepository passCacheRepository;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
