@@ -1,5 +1,6 @@
 package com.example.subscription.filter;
 
+import com.example.subscription.entity.PassType;
 import com.example.subscription.entity.redis.PassCache;
 import com.example.subscription.repo.redis.PassCacheRepository;
 import jakarta.servlet.FilterChain;
@@ -52,6 +53,7 @@ public class PassFilter extends OncePerRequestFilter {
         validateUriAccess(requestURI);
 
         passCacheRepository.save(passCache.deductChatTimes());
+        response.setHeader(PassType.CHAT_CONSUMABLE.toString(), passCache.getRemainingChatTimes() + ":" + passCache.getRemainingUnitTimes());
         filterChain.doFilter(request, response);
     }
 
